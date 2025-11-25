@@ -24,11 +24,7 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     padding: 25px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
+    text-align: center;
 }
 
 .header h1 {
@@ -39,6 +35,7 @@ body {
 .controls {
     display: flex;
     gap: 10px;
+    margin-left: auto;
 }
 
 .btn {
@@ -87,6 +84,14 @@ body {
 
 .btn-success:hover {
     background: #229954;
+}
+
+.btn-info {
+    background: #17a2b8;
+}
+
+.btn-info:hover {
+    background: #138496;
 }
 
 .search-panel {
@@ -148,6 +153,7 @@ body {
     background: #f8f9fa;
     padding: 20px 30px;
     display: flex;
+    align-items: center;
     gap: 40px;
     border-bottom: 2px solid #e9ecef;
 }

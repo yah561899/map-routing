@@ -11,10 +11,6 @@
     <div class="container">
         <div class="header">
             <h1>🗺️ 地圖路線繪製工具</h1>
-            <div class="controls">
-                <button id="clearBtn" class="btn btn-danger">清除路線</button>
-                <button id="undoBtn" class="btn btn-warning">復原上一點</button>
-            </div>
         </div>
         
         <div class="search-panel">
@@ -22,6 +18,7 @@
                 <input type="text" id="searchInput" placeholder="輸入地址或地點名稱（例如：台北101）" />
                 <button id="searchBtn" class="btn btn-primary">搜尋</button>
                 <button id="locationBtn" class="btn btn-success">📍 我的位置</button>
+                <button id="trackBtn" class="btn btn-info">🎯 追蹤位置</button>
             </div>
             <div id="searchResults"></div>
         </div>
@@ -35,6 +32,10 @@
                 <span class="label">點數：</span>
                 <span id="pointCount" class="value">0</span>
             </div>
+            <div class="controls">
+                <button id="undoBtn" class="btn btn-warning">復原上一點</button>
+                <button id="clearBtn" class="btn btn-danger">清除路線</button>
+            </div>
         </div>
 
         <div id="map"></div>
@@ -43,6 +44,7 @@
             <h3>使用說明：</h3>
             <ul>
                 <li>使用搜尋框輸入地址或地點，或點擊「我的位置」定位</li>
+                <li>點擊「追蹤位置」可以即時追蹤您的移動，地圖會自動跟隨</li>
                 <li>點擊地圖上任意位置開始繪製路線</li>
                 <li>繼續點擊以添加更多點，路線會自動沿著道路規劃</li>
                 <li>距離會自動計算並顯示</li>

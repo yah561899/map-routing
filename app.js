@@ -12,6 +12,8 @@ let routePoints = [];
 let polyline = null;
 let markers = [];
 let currentLocationMarker = null;
+let isTracking = false;
+let watchId = null;
 
 // 更新距離顯示
 function updateDistance() {
@@ -310,4 +312,106 @@ document.getElementById('locationBtn').addEventListener('click', function() {
             alert(message);
         }
     );
+});
+
+// 即時追蹤位置功能
+document.getElementById('trackBtn').addEventListener('click', function() {
+    if (!navigator.geolocation) {
+        alert('您的瀏覽器不支援定位功能');
+        return;
+    }
+    
+    const trackBtn = document.getElementById('trackBtn');
+    
+    if (!isTracking) {
+        // 開始追蹤
+        isTracking = true;
+        trackBtn.textContent = '⏸️ 停止追蹤';
+        trackBtn.classList.remove('btn-info');
+        trackBtn.classList.add('btn-danger');
+        
+        watchId = navigator.geolocation.watchPosition(
+            function(position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                // 更新地圖中心
+                map.setView([lat, lon], map.getZoom());
+                
+                // 更新或創建當前位置標記
+                if (currentLocationMarker) {
+                    currentLocationMarker.setLatLng([lat, lon]);
+                } else {
+                    currentLocationMarker = L.marker([lat, lon], {
+                        icon: L.icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41],
+                            popupAnchor: [1, -34],
+                            shadowSize: [41, 41]
+                        })
+                    }).addTo(map);
+                }
+                
+                // 添加精度圓圈
+                const accuracy = position.coords.accuracy;
+                if (currentLocationMarker.accuracyCircle) {
+                    map.removeLayer(currentLocationMarker.accuracyCircle);
+                }
+                currentLocationMarker.accuracyCircle = L.circle([lat, lon], {
+                    radius: accuracy,
+                    color: '#27ae60',
+                    fillColor: '#27ae60',
+                    fillOpacity: 0.1,
+                    weight: 1
+                }).addTo(map);
+                
+                currentLocationMarker.bindPopup(`📍 您的位置<br>精度: ${accuracy.toFixed(0)} 公尺`).openPopup();
+            },
+            function(error) {
+                let message = '無法追蹤您的位置';
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        message = '您拒絕了定位請求';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        message = '位置資訊無法取得';
+                        break;
+                    case error.TIMEOUT:
+                        message = '定位請求逾時';
+                        break;
+                }
+                alert(message);
+                
+                // 停止追蹤
+                isTracking = false;
+                trackBtn.textContent = '🎯 追蹤位置';
+                trackBtn.classList.remove('btn-danger');
+                trackBtn.classList.add('btn-info');
+            },
+            {
+                enableHighAccuracy: true,
+                maximumAge: 0,
+                timeout: 5000
+            }
+        );
+    } else {
+        // 停止追蹤
+        if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+        }
+        
+        isTracking = false;
+        trackBtn.textContent = '🎯 追蹤位置';
+        trackBtn.classList.remove('btn-danger');
+        trackBtn.classList.add('btn-info');
+        
+        // 移除精度圓圈
+        if (currentLocationMarker && currentLocationMarker.accuracyCircle) {
+            map.removeLayer(currentLocationMarker.accuracyCircle);
+            delete currentLocationMarker.accuracyCircle;
+        }
+    }
 });
